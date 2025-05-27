@@ -12,7 +12,8 @@ def print_menu():
     print("4. Add Menu Item")
     print("5. Delete Category")
     print("6. Delete Menu Item")
-    print("7. Exit")
+    print("7. Search Menu Item by Name")  # Added search option
+    print("8. Exit")
 
 def start_cli():
     init_db()
@@ -24,13 +25,19 @@ def start_cli():
 
         if choice == "1":
             categories = session.query(Category).all()
-            for cat in categories:
-                print(f"{cat.id}: {cat.name}")
-                for item in cat.menu_items:
-                    print(f"  - {item.name} (${item.price}): {item.description}")
+            if categories:
+                for cat in categories:
+                    print(f"{cat.id}: {cat.name}")
+                    for item in cat.menu_items:
+                        print(f"  - {item.name} (${item.price}): {item.description}")
+            else:
+                print("No categories found.")
 
         elif choice == "2":
             name = input("Enter category name: ").strip()
+            if not name:
+                print("Category name cannot be empty.")
+                continue
             if session.query(Category).filter_by(name=name).first():
                 print("Category already exists.")
             else:
@@ -40,14 +47,30 @@ def start_cli():
 
         elif choice == "3":
             items = session.query(MenuItem).all()
-            for item in items:
-                print(f"{item.id}: {item.name} (${item.price}) - {item.description} [Category: {item.category.name}]")
+            if items:
+                for item in items:
+                    print(f"{item.id}: {item.name} (${item.price}) - {item.description} [Category: {item.category.name}]")
+            else:
+                print("No menu items found.")
 
         elif choice == "4":
             name = input("Item name: ").strip()
+            if not name:
+                print("Item name cannot be empty.")
+                continue
             description = input("Description: ").strip()
-            price = float(input("Price: "))
-            category_id = int(input("Category ID: "))
+            try:
+                price = float(input("Price: "))
+            except ValueError:
+                print("Price must be a number.")
+                continue
+
+            try:
+                category_id = int(input("Category ID: "))
+            except ValueError:
+                print("Category ID must be an integer.")
+                continue
+
             category = session.query(Category).get(category_id)
             if not category:
                 print("Invalid category.")
@@ -57,7 +80,12 @@ def start_cli():
                 print("Menu item added.")
 
         elif choice == "5":
-            cat_id = int(input("Category ID to delete: "))
+            try:
+                cat_id = int(input("Category ID to delete: "))
+            except ValueError:
+                print("Category ID must be an integer.")
+                continue
+
             category = session.query(Category).get(cat_id)
             if category:
                 session.delete(category)
@@ -67,7 +95,12 @@ def start_cli():
                 print("Category not found.")
 
         elif choice == "6":
-            item_id = int(input("Menu Item ID to delete: "))
+            try:
+                item_id = int(input("Menu Item ID to delete: "))
+            except ValueError:
+                print("Menu Item ID must be an integer.")
+                continue
+
             item = session.query(MenuItem).get(item_id)
             if item:
                 session.delete(item)
@@ -76,7 +109,20 @@ def start_cli():
             else:
                 print("Item not found.")
 
-        elif choice == "7":
+        elif choice == "7":  # Search Menu Item by Name
+            search_term = input("Enter name to search: ").strip()
+            if not search_term:
+                print("Search term cannot be empty.")
+                continue
+            results = session.query(MenuItem).filter(MenuItem.name.ilike(f"%{search_term}%")).all()
+            if results:
+                print(f"Found {len(results)} item(s):")
+                for item in results:
+                    print(f"{item.id}: {item.name} (${item.price}) - {item.description} [Category: {item.category.name}]")
+            else:
+                print("No items found matching that name.")
+
+        elif choice == "8":
             print("Goodbye!")
             break
 
