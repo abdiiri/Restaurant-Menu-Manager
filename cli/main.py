@@ -129,5 +129,4 @@ def start_cli():
         else:
             print("Invalid option. Please try again.")
 
-            cjksajxcsa:
-            anf:
+        
