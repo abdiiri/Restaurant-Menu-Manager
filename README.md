@@ -14,4 +14,4 @@ A command-line interface (CLI) application to manage restaurant menu categories 
 ```bash
 pipenv install
 pipenv shell
-python run.py
+python3 run.py
