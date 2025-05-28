@@ -12,7 +12,7 @@ def print_menu():
     print("4. Add Menu Item")
     print("5. Delete Category")
     print("6. Delete Menu Item")
-    print("7. Search Menu Item by Name")  # Added search option
+    print("7. Search Menu Item by Name") 
     print("8. Exit")
 
 def start_cli():
@@ -109,7 +109,7 @@ def start_cli():
             else:
                 print("Item not found.")
 
-        elif choice == "7":  # Search Menu Item by Name
+        elif choice == "7": 
             search_term = input("Enter name to search: ").strip()
             if not search_term:
                 print("Search term cannot be empty.")
